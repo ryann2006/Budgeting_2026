@@ -20,7 +20,6 @@ cursor = conn.cursor()
 The Code
 """
 
-import datetime
 import sys
 
 #This is the introduction to the program
@@ -122,3 +121,4 @@ elif choice2 == 6:
     sys.exit("\n\nThank you for using our services!!! \nSincerely, a bored 19 year old.")
 else:
     sys.exit("what...???")
+
