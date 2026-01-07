@@ -20,6 +20,7 @@ cursor = conn.cursor()
 The Code
 """
 
+
 import sys
 
 #This is the introduction to the program
@@ -62,63 +63,67 @@ elif choice1.upper() == 'N':
     
 else:
     sys.exit("Hmm, there seems to be a typo...")
-    
-choice2 = int(input("\n\nWhat needs to be done today?: \n[1] Make a new entry \n[2] Check my savings balance \n[3] Check my groceries allowance \n[4] Check my spending allowance \n[5] Check all my account details \n[6] EXIT \nEnter: "))
-if choice2 == 1:
-    old_date = str(input("Enter the last date of entry: "))
-    old_date_1 =f"'{old_date}'"
-    income = str(float(input("Enter this week's income: ")))
-    rent = str(float(input("Enter this week's rent: ")))
-    remaining1 = str(float(income) - float(rent))
-    cursor.execute("SELECT savings FROM "+account_name+" WHERE date_of_entry = "+old_date_1)
-    data = cursor.fetchall()
-    for i in data:
-        for j in i:
-            savings_week_before = j
-    savings = str(0.2*float(remaining1) + float(savings_week_before))
-    remaining2 = str(float(income) - float(rent) - float(savings))
-    cursor.execute("SELECT grocery_allowance-grocery_spent FROM "+account_name+" WHERE date_of_entry = "+old_date_1)
-    data = cursor.fetchall()
-    for i in data:
-        for j in i:
-            grocery_saved_week_before = j
-    grocery_allowance = str(0.7*float(remaining2) + float(grocery_saved_week_before))
-    grocery_spent = str(float(input("Enter this week's grocery spending: ")))
-    cursor.execute("SELECT spending_allowance-spending_spent FROM "+account_name+" WHERE date_of_entry = "+old_date_1)
-    data = cursor.fetchall()
-    for i in data:
-        for j in i:
-            spending_saved_week_before = j
-    spending_allowance = str(0.3*float(remaining2) + float(spending_saved_week_before))
-    spending_spent = str(float(input("Enter this week's personal spending: ")))
-    emergency_spending = str(float(input("Enter any spending from savings? (aka emergency spending, not out of your allowance): ")))
-    cursor.execute("INSERT INTO "+account_name+" VALUES (CURRENT_DATE,"+income+","+rent+","+savings+","+grocery_allowance+","+grocery_spent+","+spending_allowance+","+spending_spent+","+emergency_spending+")")
-    conn.commit()
-    account_name_1 = f"'{account_name}'"
-    cursor.execute("UPDATE users SET income = "+income+" where account_name = "+account_name_1)
-    conn.commit()
-elif choice2 == 2:
-    cursor.execute("SELECT savings,grocery_allowance-grocery_spent as grocery_saved,spending_allowance-spending_spent as spending_saved FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
-    data = cursor.fetchall()
-    for i in data:
-        print(i)
-elif choice2 == 3:
-    cursor.execute("SELECT grocery_allowance FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
-    data = cursor.fetchall()
-    for i in data:
-        print(i)
-elif choice2 == 4:
-    cursor.execute("SELECT spending_allowance FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
-    data = cursor.fetchall()
-    for i in data:
-        print(i)
-elif choice2 == 5:
-    cursor.execute("SELECT * FROM "+account_name)
-    data = cursor.fetchall()
-    for i in data:
-        print(i)
-elif choice2 == 6:
-    sys.exit("\n\nThank you for using our services!!! \nSincerely, a bored 19 year old.")
-else:
-    sys.exit("what...???")
 
+while TRUE:    
+    choice2 = int(input("\n\nWhat needs to be done today?: \n[1] Make a new entry \n[2] Check my savings balance \n[3] Check my groceries allowance \n[4] Check my spending allowance \n[5] Check all my account details \n[6] Delete my account \n[7] EXIT \nEnter: "))
+    if choice2 == 1:
+        old_date = str(input("Enter the last date of entry: "))
+        old_date_1 =f"'{old_date}'"
+        income = str(float(input("Enter this week's income: ")))
+        rent = str(float(input("Enter this week's rent: ")))
+        remaining1 = str(float(income) - float(rent))
+        cursor.execute("SELECT savings FROM "+account_name+" WHERE date_of_entry = "+old_date_1)
+        data = cursor.fetchall()
+        for i in data:
+            for j in i:
+                savings_week_before = j
+        savings = str(0.2*float(remaining1) + float(savings_week_before))
+        remaining2 = str(float(income) - float(rent) - float(savings))
+        cursor.execute("SELECT grocery_allowance-grocery_spent FROM "+account_name+" WHERE date_of_entry = "+old_date_1)
+        data = cursor.fetchall()
+        for i in data:
+            for j in i:
+                grocery_saved_week_before = j
+        grocery_allowance = str(0.7*float(remaining2) + float(grocery_saved_week_before))
+        grocery_spent = str(float(input("Enter this week's grocery spending: ")))
+        cursor.execute("SELECT spending_allowance-spending_spent FROM "+account_name+" WHERE date_of_entry = "+old_date_1)
+        data = cursor.fetchall()
+        for i in data:
+            for j in i:
+                spending_saved_week_before = j
+        spending_allowance = str(0.3*float(remaining2) + float(spending_saved_week_before))
+        spending_spent = str(float(input("Enter this week's personal spending: ")))
+        emergency_spending = str(float(input("Enter any spending from savings? (aka emergency spending, not out of your allowance): ")))
+        cursor.execute("INSERT INTO "+account_name+" VALUES (CURRENT_DATE,"+income+","+rent+","+savings+","+grocery_allowance+","+grocery_spent+","+spending_allowance+","+spending_spent+","+emergency_spending+")")
+        conn.commit()
+        account_name_1 = f"'{account_name}'"
+        cursor.execute("UPDATE users SET income = "+income+" where account_name = "+account_name_1)
+        conn.commit()
+    elif choice2 == 2:
+        cursor.execute("SELECT savings,grocery_allowance-grocery_spent as grocery_saved,spending_allowance-spending_spent as spending_saved FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
+        data = cursor.fetchall()
+        for i in data:
+            print(i)
+    elif choice2 == 3:
+        cursor.execute("SELECT grocery_allowance FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
+        data = cursor.fetchall()
+        for i in data:
+            print(i)
+    elif choice2 == 4:
+        cursor.execute("SELECT spending_allowance FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
+        data = cursor.fetchall()
+        for i in data:
+            print(i)
+    elif choice2 == 5:
+        cursor.execute("SELECT * FROM "+account_name)
+        data = cursor.fetchall()
+        for i in data:
+            print(i)
+    elif choice2 == 6:
+        are_you_sure = input("Are you sure you wish to DELETE YOUR ACCOUNT? \n[Y/N]: ")
+        cursor.execute("DROP TABLE "+account_name)
+        sys.exit("Yikes bro alright (°ー°〃)")        
+    elif choice2 == 7:
+        sys.exit("\n\nThank you for using our services!!! \nSincerely, a bored 19 year old.")
+    else:
+        sys.exit("what...???")
