@@ -20,8 +20,16 @@ cursor = conn.cursor()
 The Code
 """
 
+def tabulate_it():
+    data = cursor.fetchall()
+    table = []
+    for i in data:
+        i=list(i)
+        table.append(i)
+    print('\n',tabulate(table, headers = column_names))
 
 import sys
+from tabulate import tabulate
 
 #This is the introduction to the program
 print("!!! A T T E N T I O N !!! \nThe following program is designed according to the whims and ideals of Ryann. \nAny questions and concerns are to be directed to her!\nThis is a program designed to help you divide your money and spend it more mindfully.\nYou'll need to update it weekly to keep data consistent!")
@@ -30,11 +38,7 @@ choice1 = input("\n\nHello there! Thank you for choosing to use this program. \n
 
 if choice1.upper() == 'Y':
     account_name = input("Enter account name: ")
-    cursor.execute("SELECT * FROM "+account_name)
-    data = cursor.fetchall()
-    for i in data:
-        print(i)
-
+    
 elif choice1.upper() == 'N':
     print("Let's start with creating an account.")
 #Here start all the variables and data that will be collected and calculated
@@ -64,7 +68,7 @@ elif choice1.upper() == 'N':
 else:
     sys.exit("Hmm, there seems to be a typo...")
 
-while TRUE:    
+while True:    
     choice2 = int(input("\n\nWhat needs to be done today?: \n[1] Make a new entry \n[2] Check my savings balance \n[3] Check my groceries allowance \n[4] Check my spending allowance \n[5] Check all my account details \n[6] Delete my account \n[7] EXIT \nEnter: "))
     if choice2 == 1:
         old_date = str(input("Enter the last date of entry: "))
@@ -100,25 +104,21 @@ while TRUE:
         cursor.execute("UPDATE users SET income = "+income+" where account_name = "+account_name_1)
         conn.commit()
     elif choice2 == 2:
-        cursor.execute("SELECT savings,grocery_allowance-grocery_spent as grocery_saved,spending_allowance-spending_spent as spending_saved FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
-        data = cursor.fetchall()
-        for i in data:
-            print(i)
+        cursor.execute("SELECT savings,grocery_allowance-grocery_spent,spending_allowance-spending_spent FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
+        column_names = ['savings','grocery_saved','spending_saved']
+        tabulate_it()
     elif choice2 == 3:
         cursor.execute("SELECT grocery_allowance FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
-        data = cursor.fetchall()
-        for i in data:
-            print(i)
+        column_names = ['grocery_allowance']
+        tabulate_it()
     elif choice2 == 4:
         cursor.execute("SELECT spending_allowance FROM "+account_name+" WHERE date_of_entry = (SELECT max(date_of_entry) FROM "+account_name+")")
-        data = cursor.fetchall()
-        for i in data:
-            print(i)
+        column_names = ['spending_allowance']
+        tabulate_it()
     elif choice2 == 5:
         cursor.execute("SELECT * FROM "+account_name)
-        data = cursor.fetchall()
-        for i in data:
-            print(i)
+        column_names = ['date_of_entry','income','rent','savings','grocery_allowance','grocery_spent','spending_allowance','spending_spent','emergency_spending']
+        tabulate_it()
     elif choice2 == 6:
         are_you_sure = input("Are you sure you wish to DELETE YOUR ACCOUNT? \n[Y/N]: ")
         cursor.execute("DROP TABLE "+account_name)
